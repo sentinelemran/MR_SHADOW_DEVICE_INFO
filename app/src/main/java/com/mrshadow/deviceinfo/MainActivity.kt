@@ -52,6 +52,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -111,8 +112,8 @@ private fun ShadowApp() {
         deviceSections = runCatching { DeviceInfoService(context).collect() }.getOrDefault(emptyList())
     }
 
-    LaunchedEffect(autoRefresh) {
-        if (autoRefresh || deviceSections.isEmpty()) refreshDeviceInfo()
+    LaunchedEffect(Unit) {
+        refreshDeviceInfo()
     }
 
     val colors = if (darkTheme) {
@@ -146,7 +147,7 @@ private fun ShadowApp() {
                         NavigationBarItem(
                             selected = page == item,
                             onClick = { page = item },
-                            icon = { androidx.compose.material3.Icon(icon, contentDescription = label) },
+                            icon = { Icon(icon, contentDescription = label) },
                             label = { Text(label) }
                         )
                     }
@@ -218,18 +219,18 @@ private fun HomeScreen(
             Spacer(Modifier.height(10.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 Button(onClick = onRefresh) {
-                    androidx.compose.material3.Icon(Icons.Default.Refresh, null)
+                    Icon(Icons.Default.Refresh, null)
                     Text(tr(language, "Refresh", "রিফ্রেশ"))
                 }
                 OutlinedButton(onClick = {
                     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
                     clipboard?.setPrimaryClip(ClipData.newPlainText("Device information", sections.asReport()))
                 }) {
-                    androidx.compose.material3.Icon(Icons.Default.ContentCopy, null)
+                    Icon(Icons.Default.ContentCopy, null)
                     Text(tr(language, "Copy", "কপি"))
                 }
                 OutlinedButton(onClick = { exporter.launch("device-info.txt") }) {
-                    androidx.compose.material3.Icon(Icons.Default.Download, null)
+                    Icon(Icons.Default.Download, null)
                     Text("TXT")
                 }
             }
@@ -237,7 +238,7 @@ private fun HomeScreen(
                 onClick = { shareText(context, sections.asReport(), "Share device information") },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                androidx.compose.material3.Icon(Icons.Default.Share, null)
+                Icon(Icons.Default.Share, null)
                 Text(tr(language, "Share report", "রিপোর্ট শেয়ার"))
             }
         }
@@ -254,7 +255,7 @@ private fun InfoSectionCard(section: InfoSection, showUnavailable: Boolean) {
         Column(Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(section.title, Modifier.weight(1f), fontWeight = FontWeight.SemiBold)
-                androidx.compose.material3.Icon(
+                Icon(
                     if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                     contentDescription = null
                 )
@@ -285,7 +286,7 @@ private fun AppsScreen(language: Language, modifier: Modifier) {
         if (apps.isEmpty()) item {
             Card(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(18.dp)) {
-                    androidx.compose.material3.Icon(Icons.Default.Apps, null)
+                    Icon(Icons.Default.Apps, null)
                     Text(tr(language, "No apps have been listed yet.", "এখনও কোনো অ্যাপ তালিকাভুক্ত করা হয়নি।"))
                     Text(tr(language, "The local catalog stays empty until real app details and URLs are provided.", "আসল অ্যাপের তথ্য ও URL না পাওয়া পর্যন্ত তালিকাটি খালি থাকবে।"))
                 }
@@ -314,7 +315,7 @@ private fun DeveloperScreen(language: Language, sections: List<InfoSection>, mod
     Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Surface(shape = CircleShape, color = MaterialTheme.colorScheme.surfaceVariant, modifier = Modifier.size(112.dp)) {
             Box(contentAlignment = Alignment.Center) {
-                androidx.compose.material3.Icon(Icons.Default.Person, null, modifier = Modifier.size(56.dp))
+                Icon(Icons.Default.Person, null, modifier = Modifier.size(56.dp))
             }
         }
         Spacer(Modifier.height(14.dp))
@@ -326,7 +327,7 @@ private fun DeveloperScreen(language: Language, sections: List<InfoSection>, mod
         ContactCard("Telegram", "https://t.me/mr_shadow23", Icons.Default.Send) { openHttpsUrl(context, it) }
         Spacer(Modifier.height(18.dp))
         Button(onClick = { reportPreview = sections.asReport() }, modifier = Modifier.fillMaxWidth()) {
-            androidx.compose.material3.Icon(Icons.Default.Security, null)
+            Icon(Icons.Default.Security, null)
             Text(tr(language, "Review & share report", "রিপোর্ট দেখে শেয়ার করুন"))
         }
         Text(
@@ -361,10 +362,10 @@ private fun DeveloperScreen(language: Language, sections: List<InfoSection>, mod
 private fun ContactCard(name: String, url: String, icon: ImageVector, onOpen: (String) -> Unit) {
     Card(Modifier.fillMaxWidth().clickable { onOpen(url) }) {
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            androidx.compose.material3.Icon(icon, null, tint = MaterialTheme.colorScheme.primary)
+            Icon(icon, null, tint = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.width(12.dp))
             Text(name, Modifier.weight(1f))
-            androidx.compose.material3.Icon(Icons.Default.OpenInNew, null)
+            Icon(Icons.Default.OpenInNew, null)
         }
     }
 }
@@ -406,15 +407,15 @@ private fun SettingsScreen(
             Card(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(10.dp)) {
                     TextButton(onClick = { dialog = "privacy" }) {
-                        androidx.compose.material3.Icon(Icons.Default.Security, null)
+                        Icon(Icons.Default.Security, null)
                         Text(tr(language, "Privacy", "গোপনীয়তা"))
                     }
                     TextButton(onClick = { dialog = "about" }) {
-                        androidx.compose.material3.Icon(Icons.Default.Info, null)
+                        Icon(Icons.Default.Info, null)
                         Text(tr(language, "About", "পরিচিতি"))
                     }
                     TextButton(onClick = { shareText(context, "MR SHADOW DEVICE INFO", "Support") }) {
-                        androidx.compose.material3.Icon(Icons.Default.Share, null)
+                        Icon(Icons.Default.Share, null)
                         Text(tr(language, "Support / share app", "সহায়তা / অ্যাপ শেয়ার"))
                     }
                 }
