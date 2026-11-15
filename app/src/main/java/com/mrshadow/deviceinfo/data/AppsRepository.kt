@@ -1,4 +1,4 @@
-package com.mrshadow.deviceinfo
+package com.mrshadow.deviceinfo.data
 
 import android.content.Context
 import org.json.JSONArray
@@ -15,18 +15,17 @@ class AppsRepository(private val context: Context) {
     )
 
     fun load(): List<AppItem> = runCatching {
-        val json = context.assets.open("apps.json").bufferedReader().use { it.readText() }
-        val array = JSONArray(json)
-        (0 until array.length()).mapNotNull { index ->
-            val item = array.optJSONObject(index) ?: return@mapNotNull null
+        val catalog = JSONArray(context.assets.open("apps.json").bufferedReader().use { it.readText() })
+        (0 until catalog.length()).mapNotNull { index ->
+            val entry = catalog.optJSONObject(index) ?: return@mapNotNull null
             AppItem(
-                id = item.optString("id", index.toString()),
-                name = item.optString("name"),
-                description = item.optString("description"),
-                category = item.optString("category"),
-                downloadUrl = item.optString("downloadUrl").takeIf(String::isNotBlank),
-                websiteUrl = item.optString("websiteUrl").takeIf(String::isNotBlank),
-                version = item.optString("version").takeIf(String::isNotBlank)
+                id = entry.optString("id", index.toString()),
+                name = entry.optString("name"),
+                description = entry.optString("description"),
+                category = entry.optString("category"),
+                downloadUrl = entry.optString("downloadUrl").takeIf(String::isNotBlank),
+                websiteUrl = entry.optString("websiteUrl").takeIf(String::isNotBlank),
+                version = entry.optString("version").takeIf(String::isNotBlank)
             )
         }
     }.getOrDefault(emptyList())
