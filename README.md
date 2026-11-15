@@ -1,24 +1,37 @@
 # MR SHADOW DEVICE INFO
 
-A privacy-conscious native Android utility built with Kotlin, Jetpack Compose, and Material 3. It displays information available through standard Android APIs, provides a local developer-app catalog, contact links, user-reviewed report sharing, and basic settings.
+A privacy-conscious Android device-information and developer-contact utility. It displays information available through standard Android APIs, provides a local developer-app catalog, and is designed for device information review rather than root/bootloader/firmware-related actions.
 
 ## Build
+- Android Studio not required for GitHub Actions
+- GitHub Actions builds the APK automatically on push or workflow dispatch
+- Java 17 + Android SDK 35
+- Gradle 8.9
 
-- Android Studio with JDK 17
-- Android SDK 35
-
-Open this repository as a Gradle project and run `:app:assembleDebug` (or use Android Studio's Run action). Minimum Android version is API 26.
+Open this repository as a Gradle project and run `./gradlew assembleDebug` locally if needed.
 
 ## Developer app catalog
+Edit `app/src/main/assets/apps.json` to publish developer-managed app entries. The initial catalog is empty by design; no fake URLs are included.
 
-Edit `app/src/main/assets/apps.json` to publish real app entries. The initial catalog is empty by design; no sample or fictitious download URLs are included. Each item can have `id`, `name`, `description`, `category`, optional `downloadUrl`, `websiteUrl`, `version`, and `visible` fields.
-
-## Secure report backend
-
-The app does not contain a Telegram bot token and does not send reports automatically. Configure `REPORT_API_BASE_URL` in `app/build.gradle.kts` with the HTTPS base URL of a separately hosted backend. It must implement `POST /v1/device-reports`, validate and rate-limit requests, sanitize and size-limit reports, and return JSON `{"success":true}` only after Telegram confirms delivery. Backend credentials and the developer's Telegram chat ID must remain server-side. Without a configured service, report submission fails visibly and honestly.
+## Secure report sharing
+The app does not include a Telegram bot token, backend secret, or fake report success message.
+The user sees a full preview before sharing and may choose to share through Android Sharesheet.
+No backend is configured yet.
 
 ## Privacy and limitations
+No IMEI, IMSI, serial number, phone number, SIM identifiers, location, account identifiers, credentials, or personal files are collected.
+No root or bootloader unlock status is guaranteed; it reads only what Android exposes.
+Camera metadata is not collected automatically; it is shown as unavailable.
+The app does not root, unlock, bootloader-unlock, flash, exploit, or install APKs silently.
 
-No IMEI, serial number, phone number, SIM identifiers, location, account identifiers, credentials, or personal files are collected. Camera specs use Camera2 metadata only; the camera is never opened for capture. Root and bootloader status are labeled "Not reliably detectable" rather than guessed. Unavailable properties are shown as such. Export uses Android's Storage Access Framework document picker; sharing uses the Android Sharesheet.
+## How to add the app
+1. Create a branch from main.
+2. Add the above files.
+3. Commit the message: `Add MR SHADOW DEVICE INFO app and GitHub Actions APK build`
+4. Push to GitHub.
+5. Open the Actions tab and wait until the APK is built.
+6. Download the artifact `mr-shadow-device-info-debug-apk`.
 
-This is a device-information and developer-contact utility, not a rooting, bootloader-unlocking, or firmware-flashing tool. Bengali localization, remote catalog management, and a production report backend require product/backend configuration before public release.
+## Artifacts
+The build job uses `actions/upload-artifact` to upload the APK as:
+`app/build/outputs/apk/debug/app-debug.apk`
