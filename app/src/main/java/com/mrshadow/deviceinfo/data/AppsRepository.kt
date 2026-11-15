@@ -1,4 +1,4 @@
-package com.mrshadow.deviceinfo.data
+package com.mrshadow.deviceinfo
 
 import android.content.Context
 import org.json.JSONArray
@@ -9,9 +9,9 @@ class AppsRepository(private val context: Context) {
         val name: String,
         val description: String,
         val category: String,
-        val downloadUrl: String? = null,
-        val websiteUrl: String? = null,
-        val version: String? = null
+        val downloadUrl: String?,
+        val websiteUrl: String?,
+        val version: String?
     )
 
     fun load(): List<AppItem> = runCatching {
